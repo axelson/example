@@ -28,6 +28,7 @@ defmodule Example.Scene.Fills do
   @start_color {0, 0, 0}
 
   @cycle "color_cycle"
+  @stream_image "stream_image"
   @parrot "images/parrot.jpg"
 
   # import IEx
@@ -37,6 +38,10 @@ defmodule Example.Scene.Fills do
 
   # --------------------------------------------------------
   def init(scene, _param, _opts) do
+    file_contents = File.read!("assets/images/parrot.jpg")
+    {:ok, img} = Scenic.Assets.Stream.Image.from_binary(file_contents)
+    Scenic.Assets.Stream.put(@stream_image, img)
+
     # build the graph
     graph =
       Graph.build(font: :roboto, font_size: 24)
@@ -48,7 +53,7 @@ defmodule Example.Scene.Fills do
           |> rect({100, 60}, t: {0, 70}, fill: {:color, :green})
           |> rect({100, 60}, t: {0, 140}, fill: {:image, @parrot})
           |> rect({100, 60}, t: {0, 210}, fill: {:stream, @cycle})
-          |> rect({100, 60}, t: {0, 280}, fill: {:linear, {0, 0, 100, 40, :red, :green}})
+          |> rect({100, 60}, t: {0, 280}, fill: {:stream, @stream_image})
           |> rect({100, 60}, t: {0, 350}, fill: {:radial, {50, 40, 0, 50, :red, :green}})
         end,
         translate: {40, @body_offset}
@@ -60,7 +65,7 @@ defmodule Example.Scene.Fills do
           |> text("fill: {:color, :green}", t: {0, 70})
           |> text("fill: {:image, #{inspect(@parrot)}}", t: {0, 140})
           |> text("fill: {:stream, #{inspect(@cycle)}}", t: {0, 210})
-          |> text("fill: {:linear, {0, 0, 100, 40, :red, :green}}", t: {0, 280})
+          |> text("fill: {:stream, @stream_image}", t: {0, 280})
           |> text("fill: {:radial, {50, 40, 0, 50, :red, :green}}", t: {0, 350})
         end,
         translate: {160, @body_offset + 40}
